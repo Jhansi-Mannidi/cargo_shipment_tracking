@@ -156,6 +156,35 @@ function Field({ label, value, icon: Icon, mono = false }: {
   )
 }
 
+/* ─── Document download ──────────────────────────────────────────────────── */
+function downloadCRDocument(cr: CargoReceipt, docName: string): boolean {
+  const filename = `${cr.id}-${docName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+  return downloadCSV(
+    [{
+      'Document Type': docName,
+      'Cargo Receipt': cr.id,
+      Shipper: cr.shipper,
+      'Shipper Ref': cr.shipperRef,
+      Destination: cr.destPort,
+      'HS Code': cr.hsCode,
+      Pieces: cr.pieces,
+      'Weight (kg)': cr.weight,
+      'Volume (m³)': cr.cbm,
+      Dimensions: `${cr.dims} cm`,
+      'Marks & Numbers': cr.marks,
+      'CFS Location': cr.location,
+      Status: cr.status,
+      'Received At': cr.receivedAt,
+      Cutoff: cr.cutoff,
+      'Consol ID': cr.consolId ?? '',
+      Temperature: cr.temp ?? '',
+      Hazmat: cr.hazmat ? 'Yes' : 'No',
+      'Generated At': new Date().toISOString(),
+    }],
+    filename
+  )
+}
+
 /* ─── CR Detail Dialog ───────────────────────────────────────────────────── */
 function CRDetailDialog({ cr, open, onClose, now }: { cr: CargoReceipt | null; open: boolean; onClose: () => void; now: number }) {
   if (!cr) return null
@@ -284,6 +313,11 @@ function CRDetailDialog({ cr, open, onClose, now }: { cr: CargoReceipt | null; o
                       key={d}
                       type="button"
                       className="flex items-center gap-1.5 text-sm font-semibold bg-muted/50 rounded-xl px-3 py-2 text-foreground hover:bg-primary/5 hover:text-primary transition-colors shadow-sm"
+                      onClick={() => {
+                        const ok = downloadCRDocument(cr, d)
+                        if (ok) toast.success(`${d} downloaded`)
+                        else toast.error(`Could not download ${d}`)
+                      }}
                     >
                       <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
                       {d}

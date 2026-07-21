@@ -16,7 +16,6 @@ function useHasMounted() {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,19 +72,14 @@ function findNavItem(pathname: string) {
 }
 
 /* ─── Theme toggle ─────────────────────────────────────────────────────────── */
-function ThemeToggle({ inSidebar = false }: { inSidebar?: boolean }) {
+function ThemeToggle() {
   const { resolvedTheme, toggleTheme } = useTheme()
   const mounted = useHasMounted()
   const isDark = resolvedTheme === 'dark'
 
   return (
     <button
-      className={cn(
-        'relative inline-flex h-8 w-8 items-center justify-center rounded-lg transition-colors focus-visible:outline-none',
-        inSidebar
-          ? 'text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent'
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-      )}
+      className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors focus-visible:outline-none"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       type="button"
       onClick={toggleTheme}
@@ -180,7 +174,7 @@ function BrandMark({ mini = false }: { mini?: boolean }) {
 }
 
 /* ─── Sidebar ──────────────────────────────────────────────────────────────── */
-function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+function Sidebar({ collapsed }: { collapsed: boolean }) {
   const hasMounted = useHasMounted()
   return (
     <aside className={cn(
@@ -223,76 +217,6 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           </nav>
         )}
       </ScrollArea>
-
-      {/* Footer */}
-      <Separator className="bg-sidebar-border" />
-      <div className={cn('py-2', collapsed ? 'px-2 space-y-1' : 'px-2.5')}>
-        {!collapsed ? (
-          <div className="flex items-center gap-1">
-            <ThemeToggle inSidebar />
-
-            {/* User menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="flex items-center gap-2 flex-1 h-8 px-1.5 rounded-lg transition-colors text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent focus-visible:outline-none cursor-pointer"
-              >
-                <Avatar className="h-5 w-5 shrink-0">
-                  <AvatarFallback className="text-2xs font-bold bg-primary text-primary-foreground">OP</AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-semibold truncate">Operator</span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" side="top" className="w-52">
-                <div className="px-2 py-1.5 mb-1">
-                  <div className="text-base font-semibold">Operator</div>
-                  <div className="text-xs text-muted-foreground">CFS Colombo · Admin</div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem><User     className="mr-2 h-3.5 w-3.5" />Profile</DropdownMenuItem>
-                <DropdownMenuItem><Settings className="mr-2 h-3.5 w-3.5" />Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
-                  <LogOut className="mr-2 h-3.5 w-3.5" />Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Collapse button */}
-            <button
-              className="ml-auto inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors focus-visible:outline-none"
-              onClick={onToggle}
-              aria-label="Collapse sidebar"
-            >
-              <PanelLeftClose className="h-[14px] w-[14px]" />
-            </button>
-          </div>
-        ) : (
-          <>
-            <ThemeToggle inSidebar />
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors focus-visible:outline-none cursor-pointer"
-              >
-                <Avatar className="h-5 w-5">
-                  <AvatarFallback className="text-2xs font-bold bg-primary text-primary-foreground">OP</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" side="top" className="w-52">
-                <div className="px-2 py-1.5 mb-1">
-                  <div className="text-base font-semibold">Operator</div>
-                  <div className="text-xs text-muted-foreground">CFS Colombo · Admin</div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem><User     className="mr-2 h-3.5 w-3.5" />Profile</DropdownMenuItem>
-                <DropdownMenuItem><Settings className="mr-2 h-3.5 w-3.5" />Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
-                  <LogOut className="mr-2 h-3.5 w-3.5" />Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        )}
-      </div>
     </aside>
   )
 }
@@ -424,7 +348,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+      <Sidebar collapsed={collapsed} />
 
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <MobileHeader />
@@ -440,7 +364,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <PanelLeftOpen className="h-[15px] w-[15px]" />
             </button>
           ) : (
-            <div />
+            <button
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors focus-visible:outline-none"
+              onClick={() => setCollapsed(true)}
+              aria-label="Collapse sidebar"
+            >
+              <PanelLeftClose className="h-[15px] w-[15px]" />
+            </button>
           )}
 
           <div className="flex items-center gap-1.5">
